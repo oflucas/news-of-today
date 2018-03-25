@@ -4,3 +4,4 @@ pymongo
 pika
 requests
 redis
+sklearn
