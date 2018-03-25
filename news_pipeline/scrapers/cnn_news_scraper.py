@@ -1,10 +1,17 @@
+# -*- coding: utf-8 -*-
 import os
 import random
 import requests
 
 from lxml import html
 
-GET_CNN_NEWS_XPATH = '''//div[@class='Paragraph__component']//text()'''
+GET_CNN_NEWS_XPATH = '''
+    //p[contains(@class, 'zn-body__paragraph')]//text()
+    | //div[contains(@class, 'zn-body__paragraph')]//text()
+    | //div[@class='Paragraph__component']//text()
+    | //p[@class='d-body-copy']//text()
+    | //div[@class='zn-body__paragraph']//text()
+    '''
 
 # Load user agents for disguising http header
 USER_AGENTS_FILE = os.path.join(os.path.dirname(__file__), 'user_agents.txt')
@@ -30,14 +37,16 @@ def extract_news(news_url):
     response = session_requests.get(news_url, headers=getHeaders())
 
     # parse html
-    news = 'no news'
+    news = ''
     try:
         tree = html.fromstring(response.content)
         # extract infomation
         news = tree.xpath(GET_CNN_NEWS_XPATH) # return a list of paragraphs
         news = ''.join(news) # gets a string for a news
+        if len(news) == 0:
+            print 'scraped nothing, url =', news_url
     except Exception as e:
         print e;
-        return 'errrrrr'
+        return ''
 
     return news
