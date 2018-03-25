@@ -26,6 +26,7 @@ cloudAMQP_client = CloudAMQPClient(SCRAPE_NEWS_TASK_QUEUE_URL, SCRAPE_NEWS_TASK_
 
 while True:
     news_list = news_api_client.getNewsFromSource(NEWS_SOURCES)
+    print "Got %d news from CNN" % len(news_list)
 
     num_of_new_news = 0
 
@@ -46,7 +47,7 @@ while True:
 
             cloudAMQP_client.sendMessage(news)
 
-    print "Fetched %d new news" % num_of_new_news
+    print "Found %d new news" % num_of_new_news
 
     # sleep while keeping heartbeat
     cloudAMQP_client.sleep(SLEEP_TIME_IN_SECONDS)
