@@ -1,0 +1,34 @@
+import os
+import sys
+import json
+import pyjsonrpc
+from bson.json_util import dumps, loads
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
+import mongodb_client
+
+SERVER_HOST = 'localhost'
+SERVER_POST = 4040
+
+class RequestHandler(pyjsonrpc.HttpRequestHandler):
+    """Test Method"""
+    @pyjsonrpc.rpcmethod
+    def add(self, a, b):
+        print "add is called with %d and %d" % (a, b)
+        return a + b
+
+    @pyjsonrpc.rpcmethod
+    def getNews(self):
+        db = mongodb_client.get_db()
+        news = list(db['news'].find())
+        return json.loads(dumps(news))
+
+
+http_server = pyjsonrpc.ThreadingHttpServer(
+    server_address = (SERVER_HOST, SERVER_POST),
+    RequestHandlerClass = RequestHandler
+)
+
+
+print "Starting HTTP server on %s:%d" % (SERVER_HOST, SERVER_POST)
+http_server.serve_forever()

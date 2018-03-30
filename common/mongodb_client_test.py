@@ -1,8 +1,8 @@
 import mongodb_client as client
 
 def test_basic():
-  db = client.get_db('test')
-  db.test.drop()
+  db = client.get_db('test')  # get db "test"
+  db.test.drop() # in db, get collection "test"
   assert db.test.count()  == 0
 
   db.test.insert({'test' : 1})
